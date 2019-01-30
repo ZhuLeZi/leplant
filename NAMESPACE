@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+import(tidyverse)
+import(stringr)
+import(reshape2)
+import(plyr)
