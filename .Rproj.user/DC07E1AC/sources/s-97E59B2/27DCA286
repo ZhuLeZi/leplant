@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1549167461664.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3267316466",
+    "id" : "27DCA286",
+    "lastKnownWriteTime" : 1549167619,
+    "last_content_update" : -2147483648,
+    "path" : "G:/笔记/R包/leplant/man/SAR.Rd",
+    "project_path" : "man/SAR.Rd",
+    "properties" : {
+        "cursorPosition" : "21,18",
+        "scrollLine" : "6",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_doc"
+}

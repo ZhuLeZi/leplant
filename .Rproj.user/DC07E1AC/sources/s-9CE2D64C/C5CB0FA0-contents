@@ -1,0 +1,567 @@
+
+library(data.table)
+library(magrittr)
+library(ggplot2)
+#####
+#x为经过plantlist包处理过，后经过人为补充，属的划分全是依据属的拉丁名，所以数据检查要严格。生活型等信息可有可无。
+KS<-function(sp,by='k'){
+  jg<-sp
+  jg$FAMILY_CN<-paste(jg$FAMILY_CN,jg$FAMILY_APGIII)#将科名加入科名的拉丁
+
+
+  if (by=='group') {
+    g_k<-tapply(jg$FAMILY_APGIII,jg$GROUP,function(x)length(unique(x)))#每个group内科的数量
+    g_s<-tapply(jg$GENUS,jg$GROUP,function(x)length(unique(x)))#每个group内属的数量
+    g_z<-tapply(jg$SPECIES,jg$GROUP,length)#每个group内种的的数量
+    ks_fx<-cbind(g_k,g_s,g_z)%>%as.data.frame()
+    names(ks_fx)<-c("科","属","种")
+  }
+
+  if (by=='k') {
+    k_s<-tapply(jg$GENUS,jg$FAMILY_CN,function(x)length(unique(x))) ###每个科内，属的数量情况
+    k_z<-tapply(jg$FAMILY_APGIII,jg$FAMILY_CN,length) ####每个科内，种的数量情况
+    k_zper<-k_z/sum(k_z)*100
+    ks_fx<-cbind(k_s,k_z,k_zper)%>%as.data.frame()
+    ks_fx<-data.frame(科名=tstrsplit(row.names(ks_fx)," ")[1],科=tstrsplit(row.names(ks_fx)," ")[2],
+                        属数=ks_fx[,1],种数=ks_fx[,2],种所占比例=ks_fx[,3])
+    names(ks_fx)<-c("科名","FAMILY_APG","属数","种数","种所占比例(%)")
+    ks_fx<-arrange(ks_fx,-种数)
+    ks_fx[,5]<-round(ks_fx[,5],2)
+  }
+  if(by=='s'){
+    s_z<-tapply(jg$SPECIES,paste(jg$GENUS_CN,jg$GENUS),length)%>%as.data.frame()
+    s_z$per<-s_z/sum(s_z)*100
+    ks_fx<-data.frame(属名=tstrsplit(row.names(s_z)," ")[1],
+                        GENUS=tstrsplit(row.names(s_z)," ")[2],种数=s_z[,1],种所占百分比=s_z[,2])
+    names(ks_fx)<-c("属名","GENUS","种数","种所占比例(%)")
+    ks_fx<-arrange(ks_fx,-种数)
+    ks_fx[,4]<-round(ks_fx[,4],2)
+  }
+  ks_fx
+}
+
+
+
+
+###############
+#######################
+##在if嵌套的sp下加以下代码，使得X轴因子以特定顺序排列
+#sp<-within(sp,{var1<-factor(vari,levels=c("a","f","b","c","d","a"))})
+#############################
+#x为经过plantlist包处理过，又添加了生活型，水分生态类型，区系地理成分的物种信息。
+
+SHX<-function(sp,by='shx',out='plot'){
+  spp<-sp
+
+  if (by=='shx') {
+    spp<-table(spp$生活型)%>%as.data.frame()
+    spp$per<-spp$Freq/sum(spp$Freq)*100
+    spp$per<-round(spp$per,2)
+    if(out=='plot'){
+      spp$Var1<-factor(spp$Var1,levels = c("灌木","小灌木","半灌木","小半灌木","多年生草本","一年生草本","一、二年生植物","草质藤本"),ordered=T)
+      p<-pot(spp)
+      p<-p+labs(x="生活型 Life form")
+    }
+    if(out=='table'){
+      names(spp)<-c("生活型","种数","百分比")
+      p<-arrange(spp,-百分比)
+    }
+  }
+  if (by=='shx2') {
+    spp<-table(spp$生活型2)%>%as.data.frame()
+    spp$per<-spp$Freq/sum(spp$Freq)*100
+    spp$per<-round(spp$per,2)
+    if(out=='plot'){
+      spp$Var1<-factor(spp$Var1,levels = c("高位芽植物","地上芽植物","地面芽植物","地下芽植物","一年生植物"),ordered=T)
+      p<-pot(spp)
+      p<-p+labs(x="生活型 Life form")
+    }
+    if(out=='table'){
+      names(spp)<-c("生活型","种数","百分比")
+      p<-arrange(spp,-百分比)
+    }
+  }
+  if (by=='stx') {
+    spp<-table(spp$水分生态类型)%>%as.data.frame()
+    spp$per<-spp$Freq/sum(spp$Freq)*100
+    spp$per<-round(spp$per,2)
+
+    if(out=='plot'){
+      spp$Var1<-factor(spp$Var1,levels = c("超旱生","强旱生","旱生","中旱生","中生","旱中生","湿中生","湿生"),ordered=T)
+      p<-pot(spp)
+      p<-p+labs(x="植物水分生态类型 Plant water ecotypes")
+    }
+    if(out=='table'){
+      names(spp)<-c("水分生态类型","种数","百分比")
+      p<-arrange(spp,-百分比)
+    }
+  }
+
+  if (by=='qxdl') {
+    spp<-table(spp$区系地理成分)%>%as.data.frame()
+    spp$per<-spp$Freq/sum(spp$Freq)*100
+    spp$per<-round(spp$per,2)
+    if(out=='plot'){
+      p<-pot(spp)
+      p<-p+labs(x="植物区系地理成分 Floristic geographic element")
+    }
+    if(out=='table'){
+      names(spp)<-c("区系地理成分","种数","百分比")
+      p<-arrange(spp,-百分比)
+    }}
+
+    if (by=='qxdl2') {
+      qxdl=leplant::qx_ecoding
+      spp<-merge(sp,qxdl,by='区系地理成分')
+      spp<-table(spp$区系地理成分2)%>%as.data.frame()
+      spp$per<-spp$Freq/sum(spp$Freq)*100
+      spp$per<-round(spp$per,2)
+      spp<-subset(spp,spp$Freq > 0)
+      if(out=='plot'){
+        spp$Var1<-factor(spp$Var1,levels = as.character(unique(qxdl$区系地理成分2)),ordered=T)
+        p<-pot(spp)
+        p<-p+labs(x="植物区系地理成分 Floristic geographic element")
+      }
+      if(out=='table'){
+        names(spp)<-c("区系地理成分","种数","百分比")
+        p<-arrange(spp,-百分比)
+      }
+  }
+  p
+  }
+
+
+  #x为经过plantlist包处理过，又添加了生活型，水分生态类型，区系地理成分的物种信息。
+
+
+#####
+###x为经过计算处理的IV顺序排列数据库；
+#y为经过plantlist包处理过，又添加了生活型，水分生态类型，区系地理成分的物种信息。(data.fram)，
+#y已经CPHF处理过了。
+###会生成如下数据的数据库
+
+#############################################################################
+#l为数字，表示最大显示物种个数
+
+QL<-function(com,cp,l){
+  com<-com
+  cp<-cp
+  cp<-data.frame(sp=cp$TAXA_NAME,D=cp$D)
+  cat<-l+1
+  new_com<-merge(com,cp,by = 'sp')
+
+  ####按层片，物种数总数
+  sum_cp<-tapply(new_com$sp,list(new_com$site,new_com$D),length)%>%jz_data()
+  names(sum_cp)<-c("site","D","物种数","xh")
+  sum_cp<-sum_cp[,-4]
+  ####按层片，重要值总数
+  iv_cp<-tapply(new_com$iv, list(new_com$site,new_com$D), sum)%>%jz_data()
+  names(iv_cp)<-c("site","D","D_iv","xh")
+  ###层片内最大的IV值
+  max_cp_sp<-tapply(new_com$iv,list(new_com$site,new_com$D),max)%>%jz_data()
+  names(max_cp_sp)<-c("site","D","iv","xh")
+
+  cs<-merge(max_cp_sp,new_com,by=c("site","D","iv"))%>%merge(.,iv_cp,by=c("site","D")) %>%merge(.,sum_cp,by=c("site","D"))
+
+  cs<-data.frame(site=cs$site,D=cs$D,D_xh=cs$xh,D_iv=cs$D_iv,物种数=cs$物种数,sp=cs$sp,sp_iv=cs$iv,sp_iv=cs$xh.y)%>%arrange(.,site,D_xh)
+
+  #new_com<-arrange(new_com,site,xh)
+
+
+  newcom1<-new_com
+  newcom1$cs<-paste(newcom1$site,newcom1$D)
+  newcom1<-arrange(newcom1,site,cs,xh)
+  newcom1<-transform(newcom1,nxh=unlist(tapply(cs,cs,index)))
+
+  #newcom2<-subset(newcom1,nxh<cat)
+  newcom2<-filter(newcom1,nxh<cat)
+  newcom2<-arrange(newcom2,site,xh)
+
+  cx<-tapply(newcom2$sp,list(newcom2$site,newcom2$D),function(x)paste(x,collapse="、"))%>%as.data.frame()
+  cx<-cbind(site=row.names(cx), cx)
+
+  ca<-melt(cx,id.vars=c("site"),variable.name="D",
+           value.name="物种",na.rm = TRUE)
+
+  re<-merge(cs,ca,by=c("site","D"))%>%arrange(.,site,D_xh)
+
+  re
+}
+
+
+#层片划分，X为QL后结果，y为划分级别IV，将大于或等于此数值的构成层片，小于此值则认为不构成层片。
+QCUT<-function(x,iv){
+  cs<-x
+  cut<-iv
+  cs[,2]<-tstrsplit(cs$D,"层")[1]
+
+  cs$cp<-cs$D_iv
+
+  cs$cp[which(cs$cp>cut|cs$cp==cut)] ="层片"
+  cs$cp[which(cs$cp<cut)] ="非"
+  cs
+}
+
+
+
+########################################
+
+
+
+
+######输入QL(com,cp,4)%>%QCUT(.,0.2)%>%PP(.,sp)后的结果
+
+#######
+QCHF<-function(x){
+  qc<-x
+  df<-qcmm(qc)%>%qcpx()
+  df
+}
+
+
+QCTABLE<-function(x,out='table'){
+  css<-x
+  css$群从组序号<-LM(css$群从组序号)
+  if(out=='mm'){
+    qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组,sep=""),群从=paste(css$群从组序号,"-",css$群从序号,css$群从,sep=""),ASS=css$Ass.,site=css$site)
+  }
+  if(out=='table'){
+    qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组),群从=paste(css$群从组序号,"-",css$群从序号,css$群从))
+  }
+  qc
+}
+
+#####input为t1的结果
+QCHF2<-function(x){
+  qc<-x
+  qc_t<-qcmm(qc)
+  ####删除组内重复值
+  cs<-tapply(qc_t$site, qc_t$群从,function(x)paste(x,collapse ="、"))%>%as.data.frame()
+  cs1<-data.frame(样地号=cs[,1],群从=row.names(cs))
+  jg<-merge(qc_t,cs1,by="群从")
+
+  df<-jg[!duplicated(jg$群从),]%>%qcpx()
+
+  df
+}
+#和新的QCHF结果对应
+QCTABLE2<-function(x,data='qc',out='table'){
+  css<-x
+  css$群从组序号<-LM(css$群从组序号)
+
+  if(data=='yf'){
+  if(out=='mm'){
+    qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组,sep=""),群从=paste(css$群从组序号,"-",css$群从序号,css$群从,sep=""),Ass=css$Ass.,site=css$site)
+#可以不要下一行，可以输出data.fram
+     #qc<-paste(qc$群从,qc$Ass,qc$site)
+    }
+  if(out=='table'){
+    qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组),群从=paste(css$群从组序号,"-",css$群从序号,css$群从))
+  }}
+
+  if(data=='qc'){
+
+    if(out=='mm'){
+    qc<-paste(paste(css$群从组序号,"-",css$群从序号,sep=""),css$群从,css$Ass.,paste("(",css$样地号,")",sep=""))
+    }
+    if(out=="table"){
+      qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组,sep=""),群从=paste(css$群从组序号,"-",css$群从序号,css$群从,sep=""))
+    }
+  }
+  qc
+}
+
+
+
+##################################
+#x为原始herb样方数据,y为已经QC组划分了的数据(QCTABLE(t2,by='mm'))
+BHD2<-function(herb,t2,data='abun',by='qc'){
+
+  m1<-merge(herb,t2,by='site')
+  if(data=='abun'){
+    bh<-tapply(m1$plot,m1$plot,length)%>%as.data.frame()
+    bh$plot<-row.names(bh)
+    m2<-merge(m1,bh,by='plot')
+
+    if(by=='qc'){
+      jg<-tapply(m2$.,m2$群从,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$群从,mean)%>%round(.,0)
+    }
+
+    if(by=='qcz'){
+      jg<-tapply(m2$.,m2$群从组,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$群从组,mean)%>%round(.,0)
+    }
+
+    if(by=='yf'){
+      jg<-tapply(m2$.,m2$site,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$site,mean)%>%round(.,0)
+    }
+    jg<-as.data.frame(jg)
+    names(jg)<-c('每平方米物种饱和度','平均物种数')
+  }
+
+  if(data=='cover'){
+    cov<-tapply(m1$sumcover,m1$plot,max)%>%as.data.frame()
+    cov$plot<-row.names(cov)
+    m2<-merge(m1,cov,by='plot')
+    if(by=='qc'){
+      jg<-tapply(m2$.,m2$群从,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$群从,mean)%>%round(.,2)
+    }
+    if(by=='qcz'){
+      jg<-tapply(m2$.,m2$群从组,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$群从组,mean)%>%round(.,2)
+    }
+    if(by=='yf'){
+      jg<-tapply(m2$.,m2$site,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$site,mean)%>%round(.,2)
+    }
+    jg<-as.data.frame(jg)
+    names(jg)<-c('每平方米群落总盖度','平均盖度')
+  }
+
+  if(data=='sp'){
+    if(by=='qc'){
+      jg<-tapply(m1$sp,m1$群从,function(x)length(unique(x)))%>%as.data.frame()
+    }
+    if(by=='qcz'){
+      jg<-tapply(m1$sp,m1$群从组,function(x)length(unique(x)))%>%as.data.frame()
+    }
+    if(by=='yf'){
+      jg<-tapply(m1$sp,m1$site,function(x)length(unique(x)))%>%as.data.frame()
+    }
+    names(jg)<-"共记载物种数"
+  }
+  if(data=='bio'){
+    bi<-tapply(m1$biomass,m1$plot,sum)%>%as.data.frame()
+    bi$plot<-row.names(bi)
+    m2<-merge(m1,bi,by='plot')
+    m2$.<-round( m2$.,2)
+    if(by=='qc'){
+      jg<-tapply(m2$.,m2$群从,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$群从,mean)%>%round(.,2)
+    }
+    if(by=='qcz'){
+      jg<-tapply(m2$.,m2$群从组,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$群从组,mean)%>%round(.,2)
+    }
+    if(by=='yf'){
+      jg<-tapply(m2$.,m2$site,function(x)paste(min(x),"~",max(x)))%>%as.data.frame()
+      jg$mean<-tapply(m2$.,m2$site,mean)%>%round(.,2)
+    }
+    names(jg)<-c('每平方米群落生物量','平均生物量')
+  }
+
+  jg
+}
+
+
+
+
+#############################
+
+###依据IV样地矩阵,com,by='table','plot'.可以根据频度统计恒有度，来计算某个种的分布范围，类似于种的生态位宽度
+HYD<-function(x,out='table'){
+  hyd<-x
+  hy<-tapply(hyd$sp,hyd$sp,length)%>%as.data.frame()
+  hyd<-data.frame(sp=row.names(hy),频度=hy[,1])%>%arrange(.,-频度)
+  hyd$相对频度百分比<-(hyd$频度/max(com$site))*100
+  hyd$dj<-cut(hyd$相对频度百分比,c(0,20,40,60,80,100))
+
+  spp<-table(hyd$dj)%>%as.data.frame()
+  spp$per<-spp$Freq/sum(spp$Freq)*100
+  spp$per<-round(spp$per,2)
+  if(out=='table'){
+    jg<-hyd
+  }
+
+  if(out=='plot'){
+    p<-pot(spp)
+
+    p<-p+labs(x="恒有度等级 Constance class")
+    jg<-p
+  }
+  jg
+
+}
+
+
+#####IV等级，重要值等级划定，统计某个中的IV总值,其是否用IV总值除以频度？，等级划定标准？
+
+IVDJ<-function(com,out='table'){
+  hyd<-com
+  hy<-tapply(hyd$iv,hyd$sp,sum)%>%as.data.frame()
+  hyd<-data.frame(sp=row.names(hy),iv=hy[,1])%>%arrange(.,-iv)
+  hyd$per<-(hyd$iv/sum(hyd$iv))*100
+  hyd$dj<-cut(hyd$per,c(0,20,40,60,80,100))
+
+  spp<-table(hyd$dj)%>%as.data.frame()
+  spp$per<-spp$Freq/sum(spp$Freq)*100
+  spp$per<-round(spp$per,2)
+  if(out=='table'){
+    jg<-hyd
+  }
+
+  if(out=='plot'){
+    p<-pot(spp)
+    p<-p+labs(x="重要值等级 Important value class")
+    jg<-p
+  }
+  jg
+
+}
+
+####input数据为t1<-QL(com,cp,4)%>%QCUT(.,0.2)%>%PP(.,sp)
+
+CPMS<-function(x,by="cp"){
+  t1<-x
+  t1$数<-'记有'
+  t1$数[which(t1$物种数==1)]<-'仅'
+
+
+  if(by=='cp'){
+    tcp<-subset(t1,t1$cp=="层片")
+    tcp$物种<-str_replace(as.character(tcp$物种),as.character(tcp$sp), "")
+    tcp$物种<-str_replace(as.character(tcp$物种),'、', "")
+
+    tcp$cpms<-CP1(tcp)%>%str_replace(., "，还有等", "")%>%str_replace(., "1种，", "")
+    mscp<-tapply(tcp$cpms,tcp$site,function(x)paste(x,collapse  = ";"))%>%as.data.frame()
+  }
+  if(by=='zw'){
+    c_p<-"层片"
+    tzw<- filter(t1, !(t1$cp %in% c_p))#对非层片植物进行描述
+    ta<-tzw
+    ta$cpms<-CP2(ta)%>%str_replace(., "1种，", "")
+    mscp<-tapply(ta$cpms,ta$site,function(x)paste(x,collapse  = ";"))%>%as.data.frame()
+  }
+  mscp
+}
+
+
+######################################
+#输入数据为x=(原始样方数据herb)或是IV矩阵数据,y=t2数据()  t1<-QL(com,cp,4)%>%QCUT(.,0.2)%>%PP(.,sp)  t2<-QCHF(t1)
+##t2未删除重复群从数据
+SUBSP<-function(herb,t2,by="sp"){
+
+  t2m<-data.frame(site=t2$site,群从组=t2$群从组,群从=t2$群从)
+  ll<-merge(herb,t2m,by="site")
+
+  subsp<-tapply(ll$sp,ll$群从组,unique)
+
+  subsp
+}
+
+#########x为原始sp数据,y为subsp 一部分结果，哪个群从的用subsp$  调用
+QCSP<-function(x,y){
+  sp<-x
+  sp_qc<-y
+
+  sp1<-as.data.frame(sp_qc)
+  names(sp1)<-"TAXA_NAME"
+
+  sp2<-merge(sp1,sp,by="TAXA_NAME")
+  sp2
+}
+
+
+#输入数据为cp
+TABLE_ZH<-function(cp){
+  cs1<-tapply(cp$TAXA_NAME,list(paste(cp$D,cp$FAMILY_CN),cp$水分生态类型),length)%>%as.data.frame()
+  shx<-tstrsplit(row.names(cs1),"层")[1]%>%as.data.frame() ##拆分生活型
+  ke<-tstrsplit(row.names(cs1)," ")[2]%>%as.data.frame()    ##拆分科
+
+  jg<-data.frame(shx,ke,cs1)
+  names(jg)[1]<-"生活型"
+  names(jg)[2]<-'科'
+
+  cpsum<-jg[,-(1:2)]
+  jg$总计<-apply(cpsum,1,sum,na.rm=T)
+  shx_sum<-tapply(jg$总计,jg$生活型,sum)%>%as.data.frame()
+  shx_sum<-data.frame(生活型=row.names(shx_sum),生活型物种数=shx_sum[,1])
+
+  jg<-merge(jg,shx_sum,by='生活型')
+  jg$百分比<-jg$生活型物种数/sum(jg$总计)*100
+  jg$百分比<-round(jg$百分比,2)
+  jg<-arrange(jg,生活型,-总计)
+
+  stx_sum<-apply(cpsum,2,sum,na.rm=T)%>%as.data.frame()
+  jg$生活型<-as.character(jg$生活型)
+  jg$科<-as.character(jg$科)
+  jg<-arrange(jg,-jg$生活型物种数)
+  jg
+}
+
+QX<-function(qxdl,sp){
+  qxdl<-qxdl
+  sp<-sp
+  cs<-tapply(sp$TAXA_NAME,sp$区系地理成分,length)%>%as.data.frame()
+  cs<-data.frame(区系地理成分=row.names(cs),种数=cs$.)
+  cs1<-merge(cs,qxdl,by='区系地理成分')
+
+  n<-tstrsplit(cs1$序号,"[.]")[1]%>%as.data.frame()
+  names(n)<-'xh'
+
+  cs2<-data.frame(cs1,n)
+  cs2$xh<-as.character(cs2$xh)%>%as.numeric()
+  cs3<-arrange(cs2,cs2$xh,cs2$序号)
+  cs3$百分比<-((cs3$种数/sum(cs3$种数))*100)%>%round(.,2)
+  jg<-data.frame(序号=cs3$序号,区系地理成分=cs3$区系地理成分,种数=cs3$种数,百分比=cs3$百分比)
+  jg
+}
+
+############
+#对样地数进行，物种累积曲线图绘制
+
+POT_SUMSP<-function(x,by='site'){
+  herb<-x
+  if(by=='site'){
+    com<-HERBIV(herb)%>%IV_01()%>%as.data.frame()
+  }
+  if(by=='plot'){
+    com<-herb[,2:3]%>%table()
+  }
+
+  plot(specaccum(com), xlab = "# of samples", ylab = "# of species")
+}
+
+
+QCZ_MS<-function(t2){
+  #群从组记载样地数
+  a1<-tapply(t2$site,t2$群从组,length)%>%as.data.frame()
+  a1<-cbind(群从组=row.names(a1),a1)
+  #
+  a2<-tapply(t2$群从序号,t2$群从组,function(x)length(unique(x)))%>%as.data.frame()
+
+  a3<-cbind(a1,a2)
+  names(a3)[2:3]<-c("样地数","群从数")
+  a3
+
+}
+
+QCZ_MS2<-function(herb,t2){
+ a<- BHD2(herb,t2,data = "sp",by="qcz")#群从组记载物种数
+  b<-BHD2(herb,t2,by='qcz')   #群从组物种饱和度
+  c<-BHD2(herb,t2,data = "cover",by="qcz") #群从组盖度
+  d<-BHD2(herb,t2,data = "bio",by="qcz")#群从组生物量
+  m<-cbind(群从组=row.names(a),a,b,c,d)
+
+  m
+}
+
+#生成的表格同样的群从会占据一行
+#一个样地是一行，尽管其被认定为是一样的群从
+QC_MS2<-function(herb,t2){
+  a<-BHD2(herb,t2,data = "sp",by="qc")
+
+  b<-BHD2(herb,t2,data = "abun",by="qc")
+
+  c<-BHD2(herb,t2,data = "cover",by="qc")
+
+  d<-BHD2(herb,t2,data = "bio",by="qc")
+
+  m<-cbind(群从=row.names(a),a,b,c,d)
+
+  m
+}
+
