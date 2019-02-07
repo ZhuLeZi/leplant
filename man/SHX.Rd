@@ -30,6 +30,6 @@ sp<-plantcom$sp
 
 SHX(sp,by="shx",out='plot')
 SHX(sp,by="shx",out='table')
-
+SHX(sp,by="qxdl2",out='table',qxdl=qxdl)
 }
 

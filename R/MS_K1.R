@@ -19,7 +19,7 @@ MS_K1<-function(sp,com,cat=5,by=5)
 
   ll<-tapply(jgll$ms,jgll$科名,function(x)paste(x,collapse = "，"))%>%as.data.frame()
   ll<-cbind(科名=row.names(ll),ll)
-  k<-KS(sp,by="k")
+  k<-KS(sp,by="family")
 
   l1<-merge(k,ll,by="科名")%>%arrange(.,-as.numeric(种数))
   l2<-l1[1:by,]

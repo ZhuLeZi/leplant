@@ -1,6 +1,6 @@
 
-  QX_TABLE<-function(sp){
-    qxdl=leplant::qx_ecoding
+  QX_TABLE<-function(sp,qxdl){
+    qxdl<-qxdl
     sp<-sp
     cs<-tapply(sp$TAXA_NAME,sp$区系地理成分,length)%>%as.data.frame()
     cs<-data.frame(区系地理成分=row.names(cs),种数=cs$.)

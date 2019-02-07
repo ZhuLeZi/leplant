@@ -1,19 +1,19 @@
 \name{QLYF}
 \alias{QLYF}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-%%  ~~function to do ... ~~
+The basic of community description, table
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Basis of Community Description List,n: the max number describe,iv:>iv indes will be seem as cp
 }
 \usage{
-QLYF(x)
+QLYF(com,cp,n=5,iv=0.1)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{x}{
-%%     ~~Describe \code{x} here~~
+
 }
 }
 

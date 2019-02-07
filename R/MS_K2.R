@@ -6,7 +6,7 @@ MS_K2<-function(sp,com,by=5,by2=length(unique(sp$FAMILY_CN))-by){
 
   p1<-zhz(sp,com)
 
-  km<-KS(sp,by="k")[1:by,1]%>%as.character()
+  km<-KS(sp,by="family")[1:by,1]%>%as.character()
 
   mz<-filter(p1, !(FAMILY_CN %in% km))%>%arrange(.,-zh_z)
   mz$ms<-paste(mz$TAXA_NAME,"（",mz$SPECIES,"）",sep="")

@@ -1,6 +1,6 @@
-SHX<-function(sp,by='shx',out='plot'){
+SHX<-function(sp,by='shx',out='plot',qxdl=NA){
   spp<-sp
-
+  qxdl<-qxdl
   if (by=='shx') {
     spp<-table(spp$生活型)%>%as.data.frame()
     spp$per<-spp$Freq/sum(spp$Freq)*100
@@ -59,7 +59,7 @@ SHX<-function(sp,by='shx',out='plot'){
     }}
 
   if (by=='qxdl2') {
-    qxdl=leplant::qx_ecoding
+
     spp<-merge(sp,qxdl,by='区系地理成分')
     spp<-table(spp$区系地理成分2)%>%as.data.frame()
     spp$per<-spp$Freq/sum(spp$Freq)*100

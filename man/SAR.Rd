@@ -2,7 +2,7 @@
 \alias{SAR}
 
 \title{
-SAR
+species area index
 }
 \description{
 print of the species area relation

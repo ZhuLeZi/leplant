@@ -2,7 +2,7 @@
 \alias{KS}
 
 \title{
-Family and Genus
+table by Family and Genus
 }
 \description{
 Analysis of Family and Genus Composition,print the result of arrange by the sum number

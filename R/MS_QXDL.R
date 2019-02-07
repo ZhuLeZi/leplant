@@ -1,6 +1,6 @@
-MS_QXDL<-function(sp,com,cut=1){
+MS_QXDL<-function(sp,com,qxdl,cut=1){
   com<-jz_data(com)
-  qxdl=leplant::qx_ecoding
+  qxdl<-qxdl
   zh<-zhz(sp,com)%>%merge(.,qxdl,by='区系地理成分')%>%arrange(.,区系地理成分2,-zh_z)
 
   zh2<-transform(zh,nxh=unlist(tapply(zh$区系地理成分2,zh$区系地理成分2,index)))

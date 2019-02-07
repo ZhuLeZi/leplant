@@ -19,12 +19,13 @@ sp information data.fram
 \examples{
 data(plantcom)
 sp<-plantcom$sp
-result<-QX_TABLE(sp)
+data(qx_ecoding)
+result<-QX_TABLE(sp,qxdl)
 
 # require(kableExtra),RMD,HTML
 
-c<-which(str_length(qxjg[,1])>2)
-kable(qxjg, align = "c") %>%
+c<-which(str_length(result[,1])>2)
+kable(result, align = "c") %>%
   kable_styling( full_width = T) %>%
   collapse_rows(columns = c(4,6), valign = "middle")%>%add_indent(c(3:6))
 

@@ -1,22 +1,24 @@
 \name{MS_QXDL}
 \alias{MS_QXDL}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+Description by qxdl
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Description according to floristic geographical elements
 }
 \usage{
-MS_QXDL(sp,com,cut=1)
+MS_QXDL(sp,com,qxdl,cut=1)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{sp}{
 sp information matrix
 }
   \item{com}{
 iv matrix
+}
+\item{qxdl}{
+qxdl data.fram
 }
   \item{cut}{
 the number of print
@@ -25,7 +27,8 @@ the number of print
 
 \examples{
 data(plantcom)
+data(qx_ecoding)
 sp<-plantcom$sp
 com<-HERBIV(plantcom$comm)
-MS_QXDL(sp,com,cut=1)
+MS_QXDL(sp,com,qxdl,cut=1)
 }

@@ -120,14 +120,3 @@ qcpx<-function(x){
   df
 }
 
-QCTABLE<-function(x,out='table'){
-  css<-QCHF(x)
-  css$群从组序号<-LM(css$群从组序号)
-  if(out=='mm'){
-    qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组,sep=""),群从=paste(css$群从组序号,"-",css$群从序号,css$群从,sep=""),ASS=css$Ass.,site=css$site)
-  }
-  if(out=='table'){
-    qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组),群从=paste(css$群从组序号,"-",css$群从序号,css$群从))
-  }
-  qc
-}
