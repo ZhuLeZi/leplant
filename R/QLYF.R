@@ -1,4 +1,4 @@
-
+﻿
 
 
 ########################################
@@ -30,7 +30,8 @@ QLYF<-function(com,cp,n=5,iv=0.1){
 
     newcom1<-new_com
     newcom1$cs<-paste(newcom1$site,newcom1$D)
-    newcom1<-arrange(newcom1,site,cs,xh)
+ 
+    newcom1<-arrange(newcom1,cs,xh)
     newcom1<-transform(newcom1,nxh=unlist(tapply(cs,cs,index)))
 
     #newcom2<-subset(newcom1,nxh<cat)
