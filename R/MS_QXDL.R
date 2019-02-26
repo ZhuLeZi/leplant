@@ -22,7 +22,7 @@ MS_QXDL<-function(sp,com,qxdl,cut=1){
   names(qxms_r)[2:4]<-c("物种","种数","百分比")
   qxms_r<-arrange(qxms_r,-种数)
   r<-qxms_r
-  qxms_r$ms<-paste(r$区系地理,"有",r$种数,"种，占总物种数的",r$百分比,"%，有",r$物种,"等",sep="")
+  qxms_r$ms<-paste(r$区系地理,"有",r$种数,"种，占总物种数的",(r$百分比)*100,"%，有",r$物种,"等",sep="")
   jg<-paste(qxms_r$ms,collapse = "；")%>%paste(.,"。",sep="")
   jg
 }

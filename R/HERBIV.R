@@ -1,23 +1,32 @@
 
-HERBIV<-function(x){
+HERBIV<-function(x,method=3){
   sh<-x
-  sp_high<-tapply(sh$hight,list(sh$plot,sh$sp),sum)
-  sp_biomass<-tapply(sh$biomass,list(sh$plot,sh$sp),sum)
-  sp_abun<-tapply(sh$abun,list(sh$plot,sh$sp),sum)
-  #
+
   xdz<-function (x)
   {
     total <- apply(x, 1, sum,na.rm=TRUE)
     x <- sweep(x, 1, total, "/")
     return(x)
   }
-  xdsp_high<-xdz(sp_high)
-  xdsp_abun<-xdz(sp_abun)
-  xdsp_biomass<-xdz(sp_biomass)
-  #
-  plotIV<-(xdsp_high+xdsp_abun+xdsp_biomass)/3
-  plotIV<-as.data.frame(plotIV)
+  if(method==3){
+  sp_high<-tapply(sh$hight,list(sh$plot,sh$sp),sum)%>%xdz()
+  sp_biomass<-tapply(sh$biomass,list(sh$plot,sh$sp),sum)%>%xdz()
+  sp_abun<-tapply(sh$abun,list(sh$plot,sh$sp),sum)%>%xdz()
+  plotIV<-(sp_high+sp_biomass+sp_abun)/3}
 
+  if(method==1){
+    sp_biomass<-tapply(sh$biomass,list(sh$plot,sh$sp),sum)%>%xdz()
+    plotIV<-sp_biomass
+  }
+
+  if(method==2){
+    sp_biomass<-tapply(sh$biomass,list(sh$plot,sh$sp),sum)%>%xdz()
+    sp_high<-tapply(sh$hight,list(sh$plot,sh$sp),sum)%>%xdz()
+    plotIV<-(sp_biomass+sp_high)/2
+  }
+
+
+  plotIV<-as.data.frame(plotIV)
   plotiv<-t(plotIV)
 
   lq <- melt(plotiv,id.vars=c(colnames(plotiv)))
@@ -26,7 +35,22 @@ HERBIV<-function(x){
   lq$site<-word(as.character(lq$plot), 1, sep = fixed('.'))
 
   la<-tapply(lq$iv,list(lq$site,lq$sp),sum,na.rm=TRUE)
-  siteiv<-la/3
+
+
+  lq$yfs<-word(as.character(lq$plot), 2, sep = fixed("."))
+  yfn<-tapply(lq$yfs,lq$site,max)%>%as.numeric()
+
+
+  newl<-length(la[1,])+1
+  la<-as.data.frame(la)
+  la[,newl]<-yfn
+
+  la<-as.matrix(la)
+  siteiv<- la/la[,newl]
+  siteiv<-siteiv[,1:newl-1]
+
+
+
   siteiv[which(siteiv==0)] <- NA
   siteiv
 
