@@ -1,0 +1,86 @@
+# 已有数据
+```{r}
+setwd("F:/大针茅/A大针茅样方/SG50")
+library(openxlsx)
+```
+# 物种分布
+```{r}
+sg1<-read.xlsx("F:/大针茅/A大针茅样方/SG50/大针茅物种分布.xlsx",sheet=1)
+sg2<-read.xlsx("F:/大针茅/A大针茅样方/SG50/大针茅物种分布.xlsx",sheet=2)
+
+sg_gbif<-data.frame(jd=sg1$longitude,wd=sg1$latitude)%>%na.omit()
+sg_cvh<-data.frame(jd=sg2$longtitude,wd=sg2$latitude)%>%na.omit()
+
+sgd<-rbind(sg_gbif,sg_cvh)
+
+leaflet()%>%addTiles()%>%addCircles(lng=sgd$jd, lat=sgd$wd)
+
+#三个来源混合标注
+leaflet()%>%addTiles()%>%addCircles(lng=sg_gbif$jd, lat=sg_gbif$wd,color = "red")%>%addCircles(lng=sg_cvh$jd, lat=sg_cvh$wd,color = "blue")%>%addCircles(lng=sg_yd$jd, lat=sg_yd$wd,color = "green")
+
+```
+
+
+## 查看样点地图
+```{r}
+
+jw<-read.xlsx("F:/大针茅/A大针茅样方/SG50/SG.xlsx",sheet=1)
+jd<-jw[,9]
+wd<-jw[,8]
+
+sg_yd<-data.frame(jd=jw[,9],wd=jw[,8])
+```
+
+```{r}
+library(leaflet)
+leaflet()%>%addTiles()%>%addCircles(lng=jd, lat=wd, label =jw[,2],color="red",weight=10)
+```
+
+```{r}
+leaflet() %>%addProviderTiles("Esri.WorldImagery") %>%addMarkers(lng=jd, lat=wd, popup=jw[,2])
+```
+
+## 样方
+```{r}
+com<-read.xlsx("F:/大针茅/A大针茅样方/SG50/SG.xlsx",sheet=2)
+
+```
+植物信息表
+```{r}
+sp<-read.xlsx("F:/大针茅/A大针茅样方/SG50/SG.xlsx",sheet=4)
+
+```
+# 群从划分表
+```{r}
+library(leplant)
+cp<-CPHF(sp)
+#注意IV计算方法的选择
+cs3<-QLYF(HERBIV(com),cp,n=3,iv=0.1)
+cs2<-QLYF(HERBIV(com,method = 2),cp,n=3,iv=0.1)
+cs1<-QLYF(HERBIV(com,method = 1),cp,n=3,iv=0.1)
+
+
+```
+
+
+```{r}
+t1<-QCTABLE2(cs1,out='table')
+t2<-QCTABLE2(cs2,out='table')
+t3<-QCTABLE2(cs3,out='table')
+```
+
+
+# 计算性状平均值
+```{r}
+tra<-read.xlsx("F:/大针茅/A大针茅样方/SG50/SG.xlsx",sheet=3)
+
+info<-tapply(tra$hight,list(tra[,3],tra$SP),mean)%>%as.data.frame()
+
+info$lm<-row.names(info)
+
+library(tidyr)
+
+jg<-gather(info,sp,hi,-lm,na.rm = T)
+jg$pp<-paste(jg$lm,jg$sp,sep="")
+```
+
