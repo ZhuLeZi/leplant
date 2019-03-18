@@ -1,10 +1,5 @@
 jz_data<-function (x) {
-  if(is.numeric(x)==T){
-    siteiv<-as.matrix(x)%>%t()
-  }
-  else{
     siteiv<-x
-  }
   lv <- melt(siteiv, id.vars = c(colnames(siteiv)))
   names(lv)[1:3] <- c("site", "sp", "iv")
   lo <- na.omit(lv)
