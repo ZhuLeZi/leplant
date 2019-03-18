@@ -1,0 +1,9 @@
+NMLIST<-function(herb){
+
+  sp<-unique(herb$sp)%>%as.data.frame()
+  names(sp)<-"TAXA_NAME"
+  sp$TAXA_NAME<-as.character(sp$TAXA_NAME)
+  spp<-leplant::nm
+  jg<-left_join(sp,spp)
+  jg
+}
