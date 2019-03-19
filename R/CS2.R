@@ -1,4 +1,4 @@
-﻿CS2<-function(f,cs){
+CS2<-function(f,cs){
 f$p<-paste(f$site,f$D)
 f$p<-str_replace_all(f$p,"层片","")
 
