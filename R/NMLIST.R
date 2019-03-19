@@ -4,6 +4,6 @@ NMLIST<-function(herb){
   names(sp)<-"TAXA_NAME"
   sp$TAXA_NAME<-as.character(sp$TAXA_NAME)
   spp<-leplant::spp
-  jg<-left_join(sp,spp)
+  jg<-left_join(sp,spp,by="TAXA_NAME")
   jg
 }

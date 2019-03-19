@@ -8,6 +8,12 @@ HERBIV<-function(x,method=3){
     x <- sweep(x, 1, total, "/")
     return(x)
   }
+  if(method==3.1){
+    sp_high<-tapply(sh$hight,list(sh$plot,sh$sp),sum)%>%xdz()
+    sp_biomass<-tapply(sh$biomass,list(sh$plot,sh$sp),sum)%>%xdz()
+    sp_cover<-tapply(sh$cover,list(sh$plot,sh$sp),sum)%>%xdz()
+    plotIV<-(sp_high+sp_biomass+sp_cover)/3}
+
   if(method==3){
   sp_high<-tapply(sh$hight,list(sh$plot,sh$sp),sum)%>%xdz()
   sp_biomass<-tapply(sh$biomass,list(sh$plot,sh$sp),sum)%>%xdz()
@@ -37,13 +43,14 @@ HERBIV<-function(x,method=3){
   la<-tapply(lq$iv,list(lq$site,lq$sp),sum,na.rm=TRUE)
 
 
-  lq$yfs<-word(as.character(lq$plot), 2, sep = fixed("."))
-  yfn<-tapply(lq$yfs,lq$site,max)%>%as.numeric()
-
+  yfn <- sh%>%group_by(site)%>%summarise(yfn=length(unique(plot)))
+  yfn<-yfn[,2]
 
   newl<-length(la[1,])+1
   la<-as.data.frame(la)
   la[,newl]<-yfn
+
+
 
   la<-as.matrix(la)
   siteiv<- la/la[,newl]

@@ -1,27 +1,28 @@
-#层片划分函数，可根据需求自定义
+﻿#层片划分函数，可根据需求自定义
 CPHF<-function(sp){
   sp<-sp
   s<-sp$GENUS
   sh<-sp$生活型
-  dis<-c("Carex" ="苔草层片",
+
+  dis<-c("Carex" ="苔草层片",                                #苔草
          "Allium"="葱类植物层片",
-         "Leymus"="根茎型禾草层片",
-         "Calamagrostis"="根茎型禾草层片",
-         "Phragmites"="根茎型禾草层片",
-         "Pennisetum"="根茎型禾草层片",
-         "Psammochloa"="根茎型禾草层片",
+         "Leymus"="根茎型禾草层片",                   #羊草
+         "Calamagrostis"="根茎型禾草层片",          #拂子茅
+         "Phragmites"="根茎型禾草层片",               #芦苇
+         "Pennisetum"="根茎型禾草层片",              #白草
+         "Psammochloa"="根茎型禾草层片",            #沙鞭
 
-         "Cleistogenes"="丛生小禾草层片",
-         "Agropyron"="丛生小禾草层片",
-         "Poa"="丛生小禾草层片",
-         "Ptilagrostis"="丛生小禾草层片",
-         "Bothriochloa"="丛生小禾草层片",
-         "Koeleria"="丛生小禾草层片",
-
-         "Stipa"="丛生禾草层片",
-         "Achnatherum"="丛生禾草层片",
-         "Elymus"="丛生禾草层片",
-         "Roegneria"="丛生禾草层片")
+         "Cleistogenes"="丛生小禾草层片",               #隐子草
+         "Agropyron"="丛生小禾草层片",                 #冰草
+         "Poa"="丛生小禾草层片",                            #早熟禾
+         "Ptilagrostis"="丛生小禾草层片",                     #细柄茅
+         "Bothriochloa"="丛生小禾草层片",               #白羊草
+         "Koeleria"="丛生小禾草层片",                    #洽草
+         "Puccinellia"="丛生小禾草层片",              #碱茅
+         "Stipa"="丛生禾草层片",                                  #针茅
+         "Achnatherum"="丛生禾草层片",             #芨芨草
+         "Elymus"="丛生禾草层片",                         #披碱草
+         "Roegneria"="丛生禾草层片")                          #鹅观草
 
   dih<-c("乔木"="乔木层片",
          "灌木"="灌木层片",
