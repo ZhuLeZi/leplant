@@ -1,4 +1,4 @@
-﻿#层片划分函数，可根据需求自定义
+
 CPHF<-function(sp){
   sp<-sp
   s<-sp$GENUS
