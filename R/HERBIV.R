@@ -1,4 +1,4 @@
-HERBIV2<-function (x, method = 3)
+HERBIV<-function (x, method = 3)
 {
   sh <- x
   xdz <- function(x) {
