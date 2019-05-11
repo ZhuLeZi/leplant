@@ -1,7 +1,7 @@
 TH<-function(sp,text){
 
   s1<-sp$TAXA_NAME
-  s<-s<-paste(sp$TAXA_NAME,sp$SPECIES,sep="(")%>%paste(.,")",sep="")
+  s<-paste(sp$TAXA_NAME,sp$SPECIES,sep="(")%>%paste(.,")",sep="")
 
   t<-length(s1)
   i<-1

@@ -12,19 +12,34 @@ QCHF2<-function(x){
 }
 #和新的QCHF结果对应
 ###x=t1
-QCTABLE2<-function(x,out='table'){
-  css<-QCHF2(x)
-  css$群从组序号<-LM(css$群从组序号)
-
-
-    if(out=='mm'){
-      qc<-paste(paste(css$群从组序号,"-",css$群从序号,sep=""),css$群从,css$Ass.,paste("(",css$样地号,")",sep=""))
-    }
-    if(out=="table"){
-      qc<-data.frame(群从组=paste(css$群从组序号,".",css$群从组,sep=""),群从=paste(css$群从组序号,"-",css$群从序号,css$群从,sep=""))
-    }
-  qc
+QCTABLE2<-function (x, out = "table")
+{
+  css <- QCHF2(x)
+  css$群从组序号 <- LM(css$群从组序号)
+  if (out == "mm") {
+    qc <- paste(paste(css$群从组序号, "-", css$群从序号,
+                      sep = ""), css$群从, css$Ass., paste("(", css$样地号,
+                                                         ")", sep = ""))
   }
-
+  if (out == "mm2") {
+    qc <-css$Ass.%>%as.data.frame()
+    HS<-function(a){
+      aa<-str_replace_all(a,"-","，")%>%str_replace_all(.,"Ass.","Ass（")
+      a2<-paste(aa,"）",sep="")
+      a2
+    }
+    qc2<-apply(qc,2,HS)
+    qc<-data.frame(CN=css$群从,Ass=qc2)
+  }
+  if (out == "table") {
+    qc <- data.frame(群从组 = paste(css$群从组序号, ".",
+                                 css$群从组, sep = ""), 群从 = paste(css$群从组序号,
+                                                                "-", css$群从序号, css$群从, sep = ""))
+  }
+  if (out == "table2") {
+    qc <- css
+  }
+  qc
+}
 
 

@@ -6,7 +6,7 @@ SHX<-function(sp,by='shx',out='plot',qxdl=NA){
     spp$per<-spp$Freq/sum(spp$Freq)*100
     spp$per<-round(spp$per,2)
     if(out=='plot'){
-      spp$Var1<-factor(spp$Var1,levels = c("灌木","小灌木","半灌木","小半灌木","多年生草本","一年生草本","一、二年生植物","草质藤本"),ordered=T)
+      spp$Var1<-factor(spp$Var1,levels = c("灌木","小灌木","半灌木","小半灌木","多年生草本","一年生草本","一、二年生草本","一、二年生植物","草质藤本"),ordered=T)
       p<-pot(spp)
       p<-p+labs(x="生活型 Life form")
     }
