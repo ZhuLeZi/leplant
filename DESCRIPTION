@@ -6,7 +6,7 @@ Author: le Zhu
 Maintainer: le Zhu <zhulezl@sina.com>
 Description: Description of community characteristics, calculation of diversity and division of groups
 License: GPL-3
-Imports: stringr, ggplot2,tidyverse,plyr,data.table,dplyr,vegan,tidyr
+Imports: stringr, ggplot2,tidyverse,plyr,data.table,dplyr,vegan,tidyr,Hmisc,officer
 Encoding: UTF-8
 LazyLoad: yes
 LazyData: true
