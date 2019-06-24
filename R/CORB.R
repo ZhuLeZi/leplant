@@ -8,7 +8,7 @@ CORB<-function(da,by="pearson"){
 
   xz<-tj$P
   xz[is.na(xz)] <- 1
-  xzx<-symnum(xz,cutpoints = c(0,0.01,0.05,1),symbols = c("**","*",""))%>%as.character()
+  xzx<-symnum(xz,cutpoints = c(0,0.001,0.01,0.05,1),symbols = c("***","**","*",""))%>%as.character()
 
 
 
